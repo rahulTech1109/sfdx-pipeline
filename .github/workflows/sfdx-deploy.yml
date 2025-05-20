@@ -6,11 +6,11 @@ on:
       - main  # or your deployment branch
 
 jobs:
-  deploy:
+  deploy-and-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Install Salesforce CLI
@@ -21,19 +21,13 @@ jobs:
           SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
         run: |
           echo "$SFDX_AUTH_URL" > sfdx_auth_url.txt
-          sfdx auth:sfdxurl:store --sfdx-url-file sfdx_auth_url.txt --set-default-dev-hub
-          # Optionally set default username if different from dev hub
-          # sfdx config:set defaultusername=yourOrgAlias
+          sfdx auth:sfdxurl:store --sfdx-url-file sfdx_auth_url.txt --set-default-username
+          # This sets default username for all commands in this session
 
       - name: Deploy source to Salesforce
         run: |
           sf project deploy start --source-dir force-app --target-org heyMynk --wait 10 --json
 
-
-      - name: Run Apex tests explicitly (optional)
+      - name: Run Apex tests and wait for results
         run: |
-          sfdx force:apex:test:run --resultformat human --wait 10
-
-      - name: Get test results (optional)
-        run: |
-          sfdx force:apex:test:report --outputdir test-results --wait 10
+          sf apex test run --wait 10 --result-format human
