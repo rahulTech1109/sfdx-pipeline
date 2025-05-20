@@ -19,8 +19,7 @@ jobs:
           node-version: '18'
 
       - name: Install Salesforce CLI
-        run: |
-          npm install --global @salesforce/cli
+        run: npm install --global @salesforce/cli
 
       - name: Authenticate to Salesforce via SFDX URL
         env:
@@ -34,10 +33,25 @@ jobs:
           sf --version
           ls -R force-app/main/default
 
-      - name: Deploy to Salesforce
+      - name: Deploy to Salesforce and run local tests
         run: |
-          sf project deploy start --source-dir force-app/main/default --wait 10 --test-level RunLocalTests --target-org myOrg
+          echo "Starting deployment..."
+          sf project deploy start \
+            --source-dir force-app/main/default \
+            --target-org myOrg \
+            --test-level RunLocalTests \
+            --wait 10 \
+            --json > deploy-result.json
 
-      - name: Run Apex tests
+          cat deploy-result.json
+
+          DEPLOY_STATUS=$(jq -r '.status' deploy-result.json)
+          if [[ "$DEPLOY_STATUS" != "0" ]]; then
+            echo "❌ Deployment failed. See details above."
+            exit 1
+          fi
+
+      - name: Output Apex test results
         run: |
-          sf apex test run --wait 10 --result-format human --target-org myOrg
+          echo "Fetching Apex test results..."
+          sf apex test report --target-org myOrg --result-format human || echo "⚠️ Failed to fetch test results"
