@@ -19,7 +19,8 @@ jobs:
           node-version: '18'
 
       - name: Install Salesforce CLI
-        run: npm install --global @salesforce/cli
+        run: |
+          npm install --global @salesforce/cli
 
       - name: Authenticate to Salesforce via SFDX URL
         env:
@@ -28,29 +29,15 @@ jobs:
           echo "$SFDX_AUTH_URL" > sfdx_auth_url.txt
           sf org login sfdx-url --sfdx-url-file sfdx_auth_url.txt --alias myOrg --set-default
 
-      - name: Deploy and Run Tests in Salesforce
+      - name: Confirm CLI and path
         run: |
-          sf project deploy start \
-            --source-dir force-app/main/default \
-            --target-org myOrg \
-            --test-level RunLocalTests \
-            --wait 10 \
-            --json > deploy-result.json
+          sf --version
+          ls -R force-app/main/default
 
-          # Fail job if deployment failed
-          if jq -e '.status != 0' deploy-result.json; then
-            echo "Deployment failed"
-            cat deploy-result.json
-            exit 1
-          fi
-
-      - name: Save Apex test results (optional for report)
+      - name: Deploy to Salesforce
         run: |
-          mkdir -p test-results
-          sf apex test report --target-org myOrg --output-dir test-results --result-format human || true
+          sf project deploy start --source-dir force-app/main/default --wait 10 --test-level RunLocalTests --target-org myOrg
 
-      - name: Upload test results artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: apex-test-results
-          path: test-results
+      - name: Run Apex tests
+        run: |
+          sf apex test run --wait 10 --result-format human --target-org myOrg
