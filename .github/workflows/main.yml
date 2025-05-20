@@ -1,0 +1,57 @@
+name: Salesforce Deploy and Test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Salesforce CLI
+        run: npm install --global @salesforce/cli
+
+      - name: Authenticate to Salesforce via SFDX URL
+        env:
+          SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
+        run: |
+          echo "$SFDX_AUTH_URL" > sfdx_auth_url.txt
+          sf org login sfdx-url --sfdx-url-file sfdx_auth_url.txt --alias myOrg --set-default
+
+      - name: Confirm CLI and path
+        run: |
+          sf --version
+          ls -R force-app/main/default
+
+      - name: Deploy to Salesforce and run local tests
+        run: |
+          echo "Starting deployment..."
+          sf project deploy start \
+            --source-dir force-app/main/default \
+            --target-org myOrg \
+            --test-level RunLocalTests \
+            --wait 10 \
+            --json > deploy-result.json
+
+          cat deploy-result.json
+
+          DEPLOY_STATUS=$(jq -r '.status' deploy-result.json)
+          if [[ "$DEPLOY_STATUS" != "0" ]]; then
+            echo "❌ Deployment failed. See details above."
+            exit 1
+          fi
+
+      - name: Output Apex test results
+        run: |
+          echo "Fetching Apex test results..."
+          sf apex test report --target-org myOrg --result-format human || echo "⚠️ Failed to fetch test results"
