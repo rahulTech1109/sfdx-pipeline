@@ -16,15 +16,12 @@ jobs:
       - name: Install Salesforce CLI
         uses: salesforcecli/setup-sfdx@v1
 
-      - name: Authenticate to Salesforce Org via JWT
-        env:
-          SF_CLIENT_ID: ${{ secrets.SF_CLIENT_ID }}
-          SF_USERNAME: ${{ secrets.SF_USERNAME }}
-          SF_JWT_KEY: ${{ secrets.SF_JWT_KEY }}
-          SF_LOGIN_URL: ${{ secrets.SF_LOGIN_URL }}
-        run: |
-          echo "$SF_JWT_KEY" > server.key
-          sfdx auth:jwt:grant --clientid $SF_CLIENT_ID --username $SF_USERNAME --jwtkeyfile server.key --instanceurl $SF_LOGIN_URL --setdefaultusername
+      - name: Authenticate to Salesforce Org via SFDX Auth URL
+  env:
+    SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
+  run: |
+    echo "$SFDX_AUTH_URL" > sfdx_auth_url.txt
+    sfdx auth:sfdxurl:store --sfdx-url-file sfdx_auth_url.txt --set-default-dev-hub
 
       - name: Deploy source to Salesforce
         run: |
