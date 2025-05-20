@@ -1,0 +1,25 @@
+name: Deploy to Salesforce
+
+on:
+  push:
+    branches:
+      - main  # Or your default branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Salesforce CLI
+        uses: sfdx-actions/setup-sfdx@v1
+
+      - name: Authenticate to Salesforce
+        env:
+          SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
+        run: sfdx auth:sfdxurl:store --sfdxurlfile <(echo "$SFDX_AUTH_URL") --setdefaultdevhubusername
+
+      - name: Deploy metadata to org
+        run: sfdx force:source:deploy -p force-app -u ${{ secrets.SFDX_ORG_ALIAS }} --wait 10 --json
