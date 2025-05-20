@@ -3,7 +3,7 @@ name: Salesforce Deploy and Test
 on:
   push:
     branches:
-      - main  # or your deployment branch
+      - main
 
 jobs:
   deploy-and-test:
@@ -16,17 +16,20 @@ jobs:
       - name: Install Salesforce CLI
         uses: salesforcecli/setup-sfdx@v1
 
-      - name: Authenticate to Salesforce Org via SFDX Auth URL
+      - name: Authenticate to Salesforce via SFDX URL (sf CLI)
         env:
           SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
         run: |
           echo "$SFDX_AUTH_URL" > sfdx_auth_url.txt
-          sfdx auth:sfdxurl:store --sfdx-url-file sfdx_auth_url.txt --set-default-username
+          sf org login sfdx-url --sfdx-url-file sfdx_auth_url.txt --alias myOrg --set-default
 
-      - name: Deploy source to Salesforce
-        run: |
-          sf project deploy start --source-dir force-app/main/default --wait 10 --test-level RunLocalTests
+      - name: Check deployment directory
+        run: ls -R force-app/main/default
 
-      - name: Run Apex tests and wait for results
+      - name: Deploy to Salesforce
         run: |
-          sf apex test run --wait 10 --result-format human
+          sf project deploy start --source-dir force-app/main/default --wait 10 --test-level RunLocalTests --target-org myOrg
+
+      - name: Run Apex tests
+        run: |
+          sf apex test run --wait 10 --result-format human --target-org myOrg
