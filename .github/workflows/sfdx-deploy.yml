@@ -17,17 +17,19 @@ jobs:
         uses: salesforcecli/setup-sfdx@v1
 
       - name: Authenticate to Salesforce Org via SFDX Auth URL
-  env:
-    SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
-  run: |
-    echo "$SFDX_AUTH_URL" > sfdx_auth_url.txt
-    sfdx auth:sfdxurl:store --sfdx-url-file sfdx_auth_url.txt --set-default-dev-hub
+        env:
+          SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
+        run: |
+          echo "$SFDX_AUTH_URL" > sfdx_auth_url.txt
+          sfdx auth:sfdxurl:store --sfdx-url-file sfdx_auth_url.txt --set-default-dev-hub
+          # Optionally set default username if different from dev hub
+          # sfdx config:set defaultusername=yourOrgAlias
 
       - name: Deploy source to Salesforce
         run: |
-          sfdx force:source:deploy -p force-app -w 10 --testlevel RunLocalTests
+          sf project deploy start --source-dir force-app --target-org heyMynk --wait 10 --test-level RunLocalTests
 
-      - name: Run Apex tests explicitly (optional if you want test report)
+      - name: Run Apex tests explicitly (optional)
         run: |
           sfdx force:apex:test:run --resultformat human --wait 10
 
