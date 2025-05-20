@@ -23,11 +23,10 @@ jobs:
           echo "$SFDX_AUTH_URL" > sfdx_auth_url.txt
           sfdx auth:sfdxurl:store --sfdx-url-file sfdx_auth_url.txt --set-default-username
           # This sets default username for all commands in this session
-
-      - name: Deploy source to Salesforce
+  - name: Deploy source to Salesforce
         run: |
           sf project deploy start --source-dir force-app --target-org heyMynk --wait 10 --json
 
       - name: Run Apex tests and wait for results
         run: |
-          sf apex test run --wait 10 --result-format human
+          sf apex test run --target-org heyMynk --wait 10 --result-format human
