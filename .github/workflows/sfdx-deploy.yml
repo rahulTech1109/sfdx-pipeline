@@ -27,7 +27,8 @@ jobs:
 
       - name: Deploy source to Salesforce
         run: |
-          sf project deploy start --source-dir force-app --target-org heyMynk --wait 10 --test-level RunLocalTests
+          sf project deploy start --source-dir force-app --target-org heyMynk --wait 10 --json
+
 
       - name: Run Apex tests explicitly (optional)
         run: |
