@@ -1,25 +1,32 @@
-name: Deploy to Salesforce
+name: Salesforce Deploy and Test
 
 on:
   push:
     branches:
-      - main  # Or your default branch
+      - main  # or your deployment branch
 
 jobs:
-  deploy:
+  deploy-and-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Salesforce CLI
-        uses: sfdx-actions/setup-sfdx@v1
+      - name: Install Salesforce CLI
+        uses: salesforcecli/setup-sfdx@v1
 
-      - name: Authenticate to Salesforce
+      - name: Authenticate to Salesforce Org via SFDX Auth URL
         env:
           SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
-        run: sfdx auth:sfdxurl:store --sfdxurlfile <(echo "$SFDX_AUTH_URL") --setdefaultdevhubusername
+        run: |
+          echo "$SFDX_AUTH_URL" > sfdx_auth_url.txt
+          sfdx auth:sfdxurl:store --sfdx-url-file sfdx_auth_url.txt --set-default-username
 
-      - name: Deploy metadata to org
-        run: sfdx force:source:deploy -p force-app -u ${{ secrets.SFDX_ORG_ALIAS }} --wait 10 --json
+      - name: Deploy source to Salesforce
+        run: |
+          sf project deploy start --source-dir force-app/main/default --wait 10 --test-level RunLocalTests
+
+      - name: Run Apex tests and wait for results
+        run: |
+          sf apex test run --wait 10 --result-format human
