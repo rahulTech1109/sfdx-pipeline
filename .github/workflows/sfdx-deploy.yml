@@ -1,9 +1,9 @@
-name: Deploy to Salesforce
+name: Salesforce Deploy and Test
 
 on:
   push:
     branches:
-      - main  # Or your default branch
+      - main  # or your deployment branch
 
 jobs:
   deploy:
@@ -13,13 +13,27 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Setup Salesforce CLI
-        uses: sfdx-actions/setup-sfdx@v1
+      - name: Install Salesforce CLI
+        uses: salesforcecli/setup-sfdx@v1
 
-      - name: Authenticate to Salesforce
+      - name: Authenticate to Salesforce Org via JWT
         env:
-          SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
-        run: sfdx auth:sfdxurl:store --sfdxurlfile <(echo "$SFDX_AUTH_URL") --setdefaultdevhubusername
+          SF_CLIENT_ID: ${{ secrets.SF_CLIENT_ID }}
+          SF_USERNAME: ${{ secrets.SF_USERNAME }}
+          SF_JWT_KEY: ${{ secrets.SF_JWT_KEY }}
+          SF_LOGIN_URL: ${{ secrets.SF_LOGIN_URL }}
+        run: |
+          echo "$SF_JWT_KEY" > server.key
+          sfdx auth:jwt:grant --clientid $SF_CLIENT_ID --username $SF_USERNAME --jwtkeyfile server.key --instanceurl $SF_LOGIN_URL --setdefaultusername
 
-      - name: Deploy metadata to org
-        run: sfdx force:source:deploy -p force-app -u ${{ secrets.SFDX_ORG_ALIAS }} --wait 10 --json
+      - name: Deploy source to Salesforce
+        run: |
+          sfdx force:source:deploy -p force-app -w 10 --testlevel RunLocalTests
+
+      - name: Run Apex tests explicitly (optional if you want test report)
+        run: |
+          sfdx force:apex:test:run --resultformat human --wait 10
+
+      - name: Get test results (optional)
+        run: |
+          sfdx force:apex:test:report --outputdir test-results --wait 10
