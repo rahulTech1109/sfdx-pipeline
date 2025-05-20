@@ -13,18 +13,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install Salesforce CLI
-        uses: salesforcecli/setup-sfdx@v1
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-      - name: Authenticate to Salesforce via SFDX URL (sf CLI)
+      - name: Install Salesforce CLI
+        run: |
+          npm install --global @salesforce/cli
+
+      - name: Authenticate to Salesforce via SFDX URL
         env:
           SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
         run: |
           echo "$SFDX_AUTH_URL" > sfdx_auth_url.txt
           sf org login sfdx-url --sfdx-url-file sfdx_auth_url.txt --alias myOrg --set-default
 
-      - name: Check deployment directory
-        run: ls -R force-app/main/default
+      - name: Confirm CLI and path
+        run: |
+          sf --version
+          ls -R force-app/main/default
 
       - name: Deploy to Salesforce
         run: |
