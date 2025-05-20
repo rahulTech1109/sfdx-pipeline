@@ -1,0 +1,255 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    /* min-height: 300px; */
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.subtitle {
+    margin-bottom: 20px;
+    /* font-style:italic; */
+}
+
+.content {
+    /* width: 100%; */
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1; 
+    /* height: 100%;  */
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    flex-direction: column;
+    text-align: center;
+}
+
+.progress-bar-container {
+    width: 30vw;
+    /* margin-top: 120px; */
+    margin-bottom: 20px;
+    z-index: 9050;
+    padding: 10px;
+}
+
+.slds-progress-bar {
+    background-color: #f3f6f9;
+    border-radius: 4px;
+    /* height: 8px;
+    width: 100%; */
+    display: flex;
+    align-items: center;
+    overflow: hidden; /* Ensure overflow does not disrupt the layout */
+}
+
+.slds-progress-bar__value {
+    /* height: 100%; */
+    background-color: #0070d2;
+    border-radius: 4px;
+    transition: width 0.3s ease-in-out;
+    /* flex-grow: 1; Allows the progress bar to fill available space */
+}
+
+.last-analyzed{
+    /* width: 100%; */
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.sentiment-container {
+    display: flex;
+    justify-content: space-between; /* Adjusts spacing between items */
+}
+
+.sentiment-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    flex-grow: 1;
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.sentiment {
+    flex: 1;
+    text-align: center;
+    background: white;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 0 10px;
+}
+
+.sentiment.positive .icon {
+    color: #36A2EB;
+}
+
+.sentiment.neutral .icon {
+    color: #FFCE56;
+}
+
+.sentiment.negative .icon {
+    color: #FF6384;
+}
+
+.icon {
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+
+.label {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.score {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.button-container {
+    margin-top: 20px;
+    text-align: center;
+    /* width: 60%; */
+}
+
+.analyze-button {
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.analyze-button[disabled] {
+    background-color: #d3d3d3;
+    border-color: #d3d3d3;
+    cursor: pointer;
+}
+
+.lightning-spinner .slds-spinner__dot-a,
+.lightning-spinner .slds-spinner__dot-b {
+    background-color: #0070d2;
+}
+
+.icon {
+    background: none;
+}
+
+.positive {
+    background-color: #9FE2BF;
+}
+
+.neutral {
+    background-color: #F5F5DC;
+}
+
+.negative {
+    background-color: #FAA0A0;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    /* min-height: 300px; */
+    /* width: 100%; Ensures container adapts to parent */
+}
+
+.positivesection-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.5rem;
+    background-color: #cbf5b7;
+    border-bottom: 1px solid #afadb000;
+    font-weight: bold;
+}
+.negativesection-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.5rem;
+    background-color: #eda6a6;
+    border-bottom: 1px solid #afadb000;
+    font-weight: bold;
+}
+
+.section-content {
+    padding: 0.5rem;
+    background-color: #afadb000;
+    border-bottom: 1px solid #afadb000;
+}
+
+
+.class1{
+    --lwc-colorTextIconDefault: blue;
+    font-weight: bold;
+}
+.class2{
+    --lwc-colorTextIconDefault: red;
+    font-weight: bold;
+}
+
+.product-review {
+    width: 18vw;
+}
+
+.model-loading-text{
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.tabs-container {
+    margin-top: 20px;
+}
+
+.slds-tab {
+    margin-bottom: 10px;
+}
+
+.slds-tab__content ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.slds-tab__content li {
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+.review-list {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.review-list li {
+    margin-bottom: 10px;
+}
+
+.loading-gif {
+    width: 14vw;
+}

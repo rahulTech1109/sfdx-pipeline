@@ -1,0 +1,20 @@
+<!--
+  @description       : 
+  @author            : aro.rahul@concret.io
+  @group             : 
+  @last modified on  : 05-06-2025
+  @last modified by  : aro.rahul@concret.io
+-->
+<template>
+        <div style="height: 300px;">
+            <lightning-datatable
+                key-field="Id"
+                data={contactData}
+                columns={columns}
+                hide-checkbox-column="true"
+                onsave={handleSave}
+                draft-values={draftvalues}>
+            </lightning-datatable>
+        </div>
+    </template>
+    
