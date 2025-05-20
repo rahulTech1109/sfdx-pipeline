@@ -26,7 +26,7 @@ jobs:
           SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
         run: |
           echo "$SFDX_AUTH_URL" > sfdx_auth_url.txt
-          sf org login sfdx-url --sfdx-url-file sfdx_auth_url.txt --alias myOrg --set-default
+          sf org login sfdx-url --sfdx-url-file sfdx_auth_url.txt --alias heyMynk --set-default
 
       - name: Confirm CLI and path
         run: |
@@ -38,7 +38,7 @@ jobs:
           echo "Starting deployment..."
           sf project deploy start \
             --source-dir force-app/main/default \
-            --target-org myOrg \
+            --target-org heyMynk \
             --test-level RunLocalTests \
             --wait 10 \
             --json > deploy-result.json
