@@ -25,7 +25,7 @@ jobs:
           # This sets default username for all commands in this session
   - name: Deploy source to Salesforce
         run: |
-          sf project deploy start --source-dir force-app --target-org heyMynk --json
+          sf project deploy start --source-dir force-app/main/default
 
       - name: Run Apex tests and wait for results
         run: |
